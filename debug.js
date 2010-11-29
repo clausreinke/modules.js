@@ -7,6 +7,7 @@ function message(msg,div) {
 }
 
 // exports
-window.message = message;
+return { message : message
+       };
 
 });

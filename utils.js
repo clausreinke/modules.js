@@ -8,6 +8,7 @@ function element(tag,attributes,children) {
 }
 
 // exports
-window.element = element;
+return { element : element
+       };
 
 });

@@ -6,7 +6,8 @@ function main() {
   message('obj says "hi"');
 }
 
-// export
-window.main = main;
+// exports
+return { main : main
+       };
 
 });

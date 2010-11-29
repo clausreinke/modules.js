@@ -9,6 +9,7 @@ function SomeObject() {
 SomeObject.prototype.count = 0;
 
 // export
-window.SomeObject = SomeObject;
+return { SomeObject : SomeObject
+       };
 
 });
