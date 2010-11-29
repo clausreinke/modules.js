@@ -1,9 +1,10 @@
-module('main.js',[],function() {
+module('main.js',['debug.js','module2.js']
+                ,function(debug,module2) {
 
 function main() {
-  var obj = new SomeObject();
+  var obj = new module2.SomeObject();
   obj.hello('hi');
-  message('obj says "hi"');
+  debug.message('obj says "hi"');
 }
 
 // exports

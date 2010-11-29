@@ -10,12 +10,18 @@
     window.console.log('loading module '+name);
     modules[name] = {name:name, imports: imports, mod: mod};
 
-    // execute module code, record exports
-    var exports = mod();
+    // collect import dependencies
+    var deps = []; 
+    for (var i in imports)
+      deps.push(modules[imports[i]].linked);
 
-    // copy exports to global namespace
-    for (var exp in exports)
-      window[exp] = exports[exp];
+    // execute module code, pass imports, record exports
+    modules[name].linked = mod.apply(null,deps);
+
+    // stop copying exports to global namespace
+    // var exports = modules[name].linked;
+    // for (var exp in exports)
+    //   window[exp] = exports[exp];
   }
 
   // export module wrapper

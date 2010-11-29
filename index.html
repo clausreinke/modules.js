@@ -23,9 +23,11 @@ var before = checkpoint();
 <hr>
 
 <script>
-main();
-var after = checkpoint(before);
-message('window has gained '+keys(after).length+' properties: '+keys(after).join(', '));
+module('',['debug.js','main.js'],function(debug,main) {
+  main.main();
+  var after = checkpoint(before);
+  debug.message('window has gained '+keys(after).length+' properties: '+keys(after).join(', '));
+ });
 </script>
 
 </body>
