@@ -1,3 +1,4 @@
+module('debug.js',[],function() {
 
 function message(msg,div) {
   var msgs = document.getElementById(div||'messages');
@@ -5,3 +6,7 @@ function message(msg,div) {
   msgs.appendChild(document.createElement("br"));
 }
 
+// exports
+window.message = message;
+
+});

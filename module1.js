@@ -1,3 +1,4 @@
+module('module1.js',[],function() {
 
 function SomeObject() { 
   this.div = element('div');
@@ -6,3 +7,8 @@ function SomeObject() {
   document.body.appendChild(this.div);
 }
 SomeObject.prototype.count = 0;
+
+// export
+window.SomeObject = SomeObject;
+
+});

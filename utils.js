@@ -1,3 +1,4 @@
+module('utils.js',[],function() {
 
 function element(tag,attributes,children) {
    var e = document.createElement(tag);
@@ -6,3 +7,7 @@ function element(tag,attributes,children) {
    return e;
 }
 
+// exports
+window.element = element;
+
+});
