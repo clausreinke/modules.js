@@ -1,0 +1,31 @@
+<html>
+<head>
+
+<script src="checkpoint.js"></script>
+<script>
+var before = checkpoint();
+</script>
+
+<script src="utils.js"></script>
+<script src="debug.js"></script>
+<script src="module1.js"></script>
+<script src="module2.js"></script>
+<script src="main.js"></script>
+
+</head>
+
+<body>
+
+<div id="messages"></div>
+
+<hr>
+
+<script>
+main();
+var after = checkpoint(before);
+message('window has gained '+keys(after).length+' properties: '+keys(after).join(', '));
+</script>
+
+</body>
+</html>
+
