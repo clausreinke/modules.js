@@ -8,12 +8,6 @@ var before = checkpoint();
 
 <script src="modules.js"></script>
 
-<script src="utils.js"></script>
-<script src="debug.js"></script>
-<script src="module1.js"></script>
-<script src="module2.js"></script>
-<script src="main.js"></script>
-
 </head>
 
 <body>
@@ -23,7 +17,7 @@ var before = checkpoint();
 <hr>
 
 <script>
-module('',['debug.js','main.js'],function(debug,main) {
+module('inline',['debug.js','main.js'],function(debug,main) {
   main.main();
   var after = checkpoint(before);
   debug.message('window has gained '+keys(after).length+' properties: '+keys(after).join(', '));
