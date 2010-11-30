@@ -148,19 +148,6 @@
   // export module wrapper
   window.module = module;
 
-  // trigger module loading for our project
-  // NOTE: we assume that loadModule calls are executed before the 
-  //       script elements they create; otherwise, we have a possible 
-  //       race condition (linkModules could be called early, because 
-  //       not all dependencies are marked as currently loading yet)
-  
-  // loadModule("utils.js");
-  // loadModule("debug.js");
-  // loadModule("module1.js");
-  // loadModule("module2.js");
-  
-  loadModule("main.js");
-
   // just calling linkModules here would not work, as we have only 
   // added the script elements, the scripts could still be loading;
 
