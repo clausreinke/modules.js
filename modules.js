@@ -1,8 +1,7 @@
 // modules.js
 (function () {
 
-  var modules = {}, // private record of module data
-      order   = []; // private record of module load order
+  var modules = {}; // private record of module data
 
   // modules are functions with additional information
   function module(name,imports,mod) {
@@ -10,10 +9,10 @@
     // record module information
     window.console.log('found module '+name);
     modules[name] = {name:name, imports: imports, mod: mod};
-
-    // allow for inline modules, which do not come via loadModule
-    if (!(name in order)) order.push(name);
-
+    
+    // trigger loading of import dependencies
+    for (var imp in imports) loadModule(imports[imp]);
+    
     // check whether this was the last module to be loaded
     // in a given dependency group
     loadedModule(name);
@@ -32,9 +31,10 @@
     element.setAttribute('type','text/javascript');
     element.setAttribute('src',mod);
     document.getElementsByTagName('head')[0].appendChild(element);
-
-    // keep record of loading order
-    order.push(mod);
+    
+    // no longer keep record of loading order
+    // order.push(mod);
+    
   }
 
   // check whether this was the last module to be loaded
@@ -58,13 +58,74 @@
     }
   }
 
+  // Sort modules by dependencies (dependents last),
+  // returning sorted list of module names.
+  function dependency_sort(modules) {
+
+    var pending = [],   // modules remaining to be sorted
+        sorted = [],    // modules already sorted
+        been_here = {}; // remember length of pending list for each module 
+                        // (if we revisit a module without pending
+                        //  getting any shorter, we are stuck in a loop)
+
+    // preparation: linked modules do not need to be sorted,
+    //              all others go into pending
+    for (var name in modules)
+      if (modules[name].linked)
+        sorted.push(name);  // allready linked by a previous run
+      else
+        pending.push(name); // sort for linking (after its dependencies)
+
+    // has mod been sorted already?
+    function issorted(mod){
+      var result = false;
+      for (var s in sorted) result = result || (sorted[s]===mod);
+      return result;
+    }
+
+    // have all dependencies deps been sorted already?
+    function aresorted(deps){
+      var result = true;
+      for (var d in deps) result = result && (issorted(deps[d]));
+      return result;
+    }
+
+    // repeat while there are modules pending
+    while (pending.length>0) {
+
+      // consider the next pending module
+      var m = pending.shift();
+
+      // if we've been here and have not made any progress, we are looping
+      // (no support for cyclic module dependencies)
+      if (been_here[m] && been_here[m]<=pending.length)
+        throw("can't sort dependencies: "+sorted+" < "+m+" < "+pending);
+      else
+        been_here[m] = pending.length;
+
+      // consider the current module's import dependencies
+      var deps = modules[m].imports;
+      if (aresorted(deps))
+        sorted.push(m);  // dependencies done; module done
+      else
+        pending.push(m); // some dependencies still pending;
+                         // revisit module later
+    }
+
+    return sorted;
+  }
+
   // link and run loaded modules, keep record of results
   function linkModules() {
     window.console.log('linking modules');
+    
+    // sort modules in dependency order
+    var sortedNames = dependency_sort(modules);
 
-    // link modules in loading order
-    for (var nextName in order) {
-      var name    = order[nextName];
+    // link modules in dependency order
+    for (var nextName in sortedNames) {
+      var name    = sortedNames[nextName];
+    
       var module  = modules[name];
       var imports = module.imports;
 
@@ -88,15 +149,16 @@
   window.module = module;
 
   // trigger module loading for our project
-  // NOTE: we assume that all these loadModule calls are executed
-  //       before any of the script elements they create; otherwise,
-  //       we have a possible race condition (linkModules could be 
-  //       called early, because not all dependencies are marked as
-  //       currently loading yet)
-  loadModule("utils.js");
-  loadModule("debug.js");
-  loadModule("module1.js");
-  loadModule("module2.js");
+  // NOTE: we assume that loadModule calls are executed before the 
+  //       script elements they create; otherwise, we have a possible 
+  //       race condition (linkModules could be called early, because 
+  //       not all dependencies are marked as currently loading yet)
+  
+  // loadModule("utils.js");
+  // loadModule("debug.js");
+  // loadModule("module1.js");
+  // loadModule("module2.js");
+  
   loadModule("main.js");
 
   // just calling linkModules here would not work, as we have only 
